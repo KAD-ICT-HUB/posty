@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:posty/screens/authentication_screen.dart';
+import 'package:posty/screens/post_screen.dart';
 import 'package:posty/screens/posts_screen.dart';
 
 class AppWidget extends StatelessWidget {

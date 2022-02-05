@@ -1,5 +1,9 @@
+import 'package:another_flushbar/flushbar_helper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:posty/screens/manage_posts_screen.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({
@@ -11,6 +15,47 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  loginUser({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      Navigator.pushReplacement(
+        context,
+        CupertinoPageRoute(
+          builder: (_) => const ManagePostsScreen(),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'invalid-email') {
+        FlushbarHelper.createError(
+          message: 'Invalid email',
+          title: 'Error',
+        ).show(context);
+        return;
+      } else if (e.code == 'wrong-password') {
+        FlushbarHelper.createError(
+          message: 'Wrong password',
+          title: 'Error',
+        ).show(context);
+        return;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  _submit() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      await loginUser(
+          email: _emailController.text, password: _passwordController.text);
+    }
+  }
+
   bool _showPassword = false;
   toggolePasswordVisibility() {
     setState(() {
@@ -18,11 +63,16 @@ class _LoginFormState extends State<LoginForm> {
     });
   }
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 20, right: 20, top: 5),
       child: Form(
+        key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -35,6 +85,7 @@ class _LoginFormState extends State<LoginForm> {
             ),
             const SizedBox(height: 15),
             TextFormField(
+              controller: _emailController,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.email_rounded),
                 label: const Text('Email'),
@@ -47,6 +98,7 @@ class _LoginFormState extends State<LoginForm> {
             const SizedBox(height: 15),
             TextFormField(
               obscureText: _showPassword,
+              controller: _passwordController,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.password_outlined),
                 suffixIcon: IconButton(
@@ -68,6 +120,17 @@ class _LoginFormState extends State<LoginForm> {
               child: Text(
                 'Forgot Password?',
                 style: GoogleFonts.berkshireSwash(),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: _submit,
+                icon: const Icon(Icons.email),
+                label: Text(
+                  'Sign In',
+                  style: GoogleFonts.montserrat(),
+                ),
               ),
             ),
             const SizedBox(height: 10),
