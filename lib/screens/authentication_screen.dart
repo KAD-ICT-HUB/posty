@@ -16,26 +16,29 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Center(child: Header()),
-            _showLogin ? const LoginForm() : const RegisterationForm(),
-            const SizedBox(height: 100),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: TextButton(
-                onPressed: () {
-                  setState(() {
-                    _showLogin = !_showLogin;
-                  });
-                },
-                child: Text(_showLogin
-                    ? 'Don\'t have an account? Register'
-                    : 'Already have an account? Login'),
-              ),
-            )
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 70),
+              const Center(child: Header()),
+              _showLogin ? const LoginForm() : const RegisterationForm(),
+              const SizedBox(height: 100),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _showLogin = !_showLogin;
+                    });
+                  },
+                  child: Text(_showLogin
+                      ? 'Don\'t have an account? Register'
+                      : 'Already have an account? Login'),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

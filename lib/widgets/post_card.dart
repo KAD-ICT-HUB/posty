@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:posty/models/post.dart';
 import 'package:posty/screens/post_details_screen.dart';
 import 'package:posty/utilities/constants.dart';
 
 class PostCard extends StatelessWidget {
+  final Post post;
   const PostCard({
     Key? key,
+    required this.post,
   }) : super(key: key);
   final bool user = false;
   @override
@@ -30,7 +33,7 @@ class PostCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Why Exes can\'t be Friends',
+              post.title,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.berkshireSwash(
@@ -40,7 +43,7 @@ class PostCard extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             Text(
-              'Quae omnis adipisci rerum distinctio quia debitis. Quia cumque qui et. Saepe mollitia quas molestiae saepe ut aut aut ipsa. Officia nesciunt iusto excepturi blanditiis sequi quo.',
+              post.body,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.montserrat(),

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:posty/models/post.dart';
 import 'package:posty/screens/manage_posts_screen.dart';
 
 class RegisterationForm extends StatefulWidget {
@@ -24,12 +25,7 @@ class _RegisterationFormState extends State<RegisterationForm> {
     try {
       await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      Navigator.pushReplacement(
-        context,
-        CupertinoPageRoute(
-          builder: (_) => const ManagePostsScreen(),
-        ),
-      );
+      await _auth.currentUser?.updateDisplayName(_displayNameController.text);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         FlushbarHelper.createError(
@@ -54,6 +50,12 @@ class _RegisterationFormState extends State<RegisterationForm> {
       _formKey.currentState!.save();
       await registerUser(
           email: _emailController.text, password: _passwordController.text);
+      Navigator.pushReplacement(
+        context,
+        CupertinoPageRoute(
+          builder: (_) => const ManagePostsScreen(),
+        ),
+      );
     }
   }
 
@@ -67,6 +69,7 @@ class _RegisterationFormState extends State<RegisterationForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _displayNameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -82,6 +85,25 @@ class _RegisterationFormState extends State<RegisterationForm> {
               style: GoogleFonts.montserrat(
                 fontSize: 32,
                 fontWeight: FontWeight.w300,
+              ),
+            ),
+            const SizedBox(height: 15),
+            TextFormField(
+              controller: _displayNameController,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Please enter your full name';
+                } else if (value.length < 3) {
+                  return 'Your name must be at least 3 characters long';
+                }
+              },
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.person),
+                label: const Text('Display Name'),
+                hintText: 'John Doe',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(height: 15),
